@@ -40,8 +40,7 @@ async function bootstrap() {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     data: payload,
-    baseURL:
-      `${process.env.SLACK_WEBHOOK_URL}`,
+    baseURL: `${process.env.SLACK_WEBHOOK_URL}`,
   };
   await axios.request(options);
   await app.listen(Number(process.env.SERVER_PORT));
