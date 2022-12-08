@@ -161,6 +161,82 @@ export class ProductService {
     }
   }
 
+  async countProductByStatus({
+    type,
+    option,
+  }: {
+    type: PRODUCT_SEARCH_TYPE;
+    option: PRODUCT_INCLUDE_OPTION;
+  }) {
+    //LOGGING
+    console.log(new Date(), ' | ProductService.findProductByStatus()');
+
+    if (type === PRODUCT_SEARCH_TYPE.ALL) {
+      if (option === PRODUCT_INCLUDE_OPTION.INCLUDE_SOLDED_OUT) {
+        return await this.productRepository
+          .createQueryBuilder('product')
+          .getCount();
+      } else if (option === PRODUCT_INCLUDE_OPTION.EXCLUDE_SOLDED_OUT) {
+        return await this.productRepository
+          .createQueryBuilder('product')
+          .where('product.isSoldout = :isSoldout', { isSoldout: false })
+          .getCount();
+      } else {
+        throw new UnprocessableEntityException('Invalid option');
+      }
+    } else if (type === PRODUCT_SEARCH_TYPE.PENDING) {
+      if (option === PRODUCT_INCLUDE_OPTION.INCLUDE_SOLDED_OUT) {
+        return await this.productRepository
+          .createQueryBuilder('product')
+          .where('product.validFrom > :now', { now: new Date() })
+          .getCount();
+      } else if (option === PRODUCT_INCLUDE_OPTION.EXCLUDE_SOLDED_OUT) {
+        return await this.productRepository
+          .createQueryBuilder('product')
+          .where('product.validFrom > :now', { now: new Date() })
+          .andWhere('product.isSoldout = :isSoldout', { isSoldout: false })
+          .getCount();
+      } else {
+        throw new UnprocessableEntityException('Invalid option');
+      }
+    } else if (type === PRODUCT_SEARCH_TYPE.IN_PROGRESS) {
+      if (option === PRODUCT_INCLUDE_OPTION.INCLUDE_SOLDED_OUT) {
+        return await this.productRepository
+          .createQueryBuilder('product')
+          .where('product.validFrom <= :now', { now: new Date() })
+          .andWhere('product.validUntil >= :now', { now: new Date() })
+          .getCount();
+      } else if (option === PRODUCT_INCLUDE_OPTION.EXCLUDE_SOLDED_OUT) {
+        return await this.productRepository
+          .createQueryBuilder('product')
+          .where('product.validFrom <= :now', { now: new Date() })
+          .andWhere('product.validUntil >= :now', { now: new Date() })
+          .andWhere('product.isSoldout = :isSoldout', { isSoldout: false })
+          .getCount();
+      } else {
+        throw new UnprocessableEntityException('Invalid option');
+      }
+    } else if (type === PRODUCT_SEARCH_TYPE.FINISHED) {
+      if (option === PRODUCT_INCLUDE_OPTION.INCLUDE_SOLDED_OUT) {
+        return await this.productRepository
+          .createQueryBuilder('product')
+          .where('product.validUntil < :now', { now: new Date() })
+          .leftJoinAndSelect('product.productDetail', 'productDetail')
+          .getCount();
+      } else if (option === PRODUCT_INCLUDE_OPTION.EXCLUDE_SOLDED_OUT) {
+        return await this.productRepository
+          .createQueryBuilder('product')
+          .where('product.validUntil < :now', { now: new Date() })
+          .andWhere('product.isSoldout = :isSoldout', { isSoldout: false })
+          .getCount();
+      } else {
+        throw new UnprocessableEntityException('Invalid option');
+      }
+    } else {
+      throw new UnprocessableEntityException('Invalid type');
+    }
+  }
+
   async findProductByCreator({ userId, page }) {
     //LOGGING
     console.log(new Date(), ' | ProductService.findProductByCreator()');
