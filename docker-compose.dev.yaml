@@ -3,7 +3,6 @@ version: '3.7'
 services:
   zero9-server:
     image: reg.brian-hong.tech/zero9/zero9-server:latest
-    platform: linux/arm64/v8
     container_name: zero9-server
     restart: always
     ports:
