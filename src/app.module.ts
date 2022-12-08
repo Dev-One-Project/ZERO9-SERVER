@@ -38,6 +38,7 @@ const originList = process.env.ORIGIN_LIST.split(',');
     ConfigModule.forRoot({ isGlobal: true }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
+      cache: 'bounded',
       autoSchemaFile: 'src/common/graphql/schema.gql',
       context: ({ req, res }) => ({ req, res }),
       cors: {

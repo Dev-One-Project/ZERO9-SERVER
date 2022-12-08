@@ -97,6 +97,19 @@ export class ProductResolver {
     return await this.productService.countProductByUserId({ userId });
   }
 
+  @Query(() => Number, { description: 'count product by status' })
+  async countProductByStatus(
+    @Args({ name: 'type', type: () => PRODUCT_SEARCH_TYPE })
+    type: PRODUCT_SEARCH_TYPE,
+    @Args({ name: 'option', type: () => PRODUCT_INCLUDE_OPTION })
+    option: PRODUCT_INCLUDE_OPTION,
+  ) {
+    //LOGGING
+    console.log(new Date(), ' | API Count Product By Status Requested');
+
+    return await this.productService.countProductByStatus({ type, option });
+  }
+
   @UseGuards(GqlAuthAccessGuard)
   @Mutation(() => Product, { description: 'product signup' })
   async createProduct(
