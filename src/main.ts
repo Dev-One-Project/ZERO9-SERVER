@@ -40,8 +40,7 @@ async function bootstrap() {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     data: payload,
-    baseURL:
-      'https://hooks.slack.com/services/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',
+    baseURL: `${process.env.SLACK_WEBHOOK_URL}`,
   };
   await axios.request(options);
   await app.listen(Number(process.env.SERVER_PORT));
