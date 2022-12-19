@@ -439,21 +439,18 @@ export class ProductService {
     if (product.user.id !== user.id) {
       throw new UnauthorizedException('상품을 삭제할 권한이 없습니다');
     }
-
     if (isOrderExist) {
-      if (isOrderExist) {
-        throw new UnprocessableEntityException(
-          '주문이 존재하는 상품은 삭제할 수 없습니다',
-        );
-      }
-      await this.productRepository.softDelete({ id: productId }).catch(() => {
-        throw new UnprocessableEntityException('삭제 실패');
-      });
-      await this.productDetailService.deleteDetail({ productId }).catch(() => {
-        throw new UnprocessableEntityException('삭제 실패');
-      });
-      return true;
+      throw new UnprocessableEntityException(
+        '주문이 존재하는 상품은 삭제할 수 없습니다',
+      );
     }
+    await this.productRepository.softDelete({ id: productId }).catch(() => {
+      throw new UnprocessableEntityException('삭제 실패');
+    });
+    await this.productDetailService.deleteDetail({ productId }).catch(() => {
+      throw new UnprocessableEntityException('삭제 실패');
+    });
+    return true;
   }
 
   async checkBussinessNumber({ createProductInput }) {
