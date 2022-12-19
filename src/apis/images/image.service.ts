@@ -93,9 +93,9 @@ export class ImageService {
         fileName: queue[index].filename,
       };
     });
-    const images: Promise<Image>[] = databaseInput.map(
+    const images = await Promise.all(databaseInput.map(
       async (image) => await this.createImage({ image }),
-    );
+    ));
     //LOGGING
     console.log(new Date(), ' | ========= images =========', images);
     return images;
